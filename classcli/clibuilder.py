@@ -6,7 +6,13 @@ import sys
 import argparse
 import inspect
 
-from sty import fg, rs
+try:
+    from sty import fg, rs
+except ImportError:
+    class EmptyStringer:
+        def __getattribute__(self, attr):
+            return ''
+    fg = rs = EmptyStringer()
 
 
 class ClassParser(argparse.ArgumentParser):
@@ -52,7 +58,6 @@ class CliBuilder:
                 raise argparse.ArgumentError(None, 'At least one argument needed.')
             args.func(**{k: v for k, v in vars(args).items() if k != 'func'})
         except argparse.ArgumentError as ex:
-            import traceback
             print(f'{fg.red}ERROR! Wrong command invocation: {ex.message}{rs.fg}')
             print('Please read the help:')
             self.parser.print_help()

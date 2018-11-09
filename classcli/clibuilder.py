@@ -23,12 +23,19 @@ class ClassParser(argparse.ArgumentParser):
 
 
 class CliBuilder:
-    def __init__(self, controllers_module):
+    def __init__(self, module_or_obj_collection):
         self.parser = ClassParser()
         subparsers = self.parser.add_subparsers()
-
-        # For every controller class defined in the controllers_module module we add a subparser
-        for _, cls in inspect.getmembers(controllers_module, inspect.isclass):
+        if isinstance(module_or_obj_collection, dict):
+            iterator = ((cname, obj) for cname, obj in module_or_obj_collection.items() if inspect.isclass(obj))
+        elif isinstance(module_or_obj_collection, list):
+            iterator = ((obj.__name__, obj) for obj in module_or_obj_collection if inspect.isclass(obj))
+        elif inspect.ismodule(module_or_obj_collection):
+            iterator = inspect.getmembers(module_or_obj_collection, inspect.isclass)
+        else:
+            raise TypeError('Unsupported type for CLI init: list/dist with classes in it or module supported.')
+        # For every controller class defined in the module_or_obj_collection module we add a subparser
+        for _, cls in iterator:
             # Only classes with _callable will be added as subparser (so to exclude utility classes)
             if getattr(cls, 'callable_cls', False):
                 # Instantiate the controller class

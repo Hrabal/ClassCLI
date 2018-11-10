@@ -53,10 +53,8 @@ class CliBuilder:
                         for arg in inspect.signature(fnc).parameters.values():
                             name = f'--{arg.name}' if arg.default is not arg.empty else arg.name
                             default = arg.default if arg.default is not arg.empty else None
-                            method.add_argument(name,
-                                                type=arg.annotation or str,
-                                                default=default
-                                                )
+                            typ = arg.annotation if arg.annotation is not arg.empty else str
+                            method.add_argument(name, type=typ, default=default)
 
     def run_cli(self):
         args = self.parser.parse_args()

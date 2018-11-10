@@ -13,8 +13,10 @@ Example code:
 ```python
 from classcli import CliBuilder
 
+
 class NonCommandClass:
     pass
+
 
 class MainCommand:
     callable_cls = True
@@ -22,9 +24,11 @@ class MainCommand:
 
     def _base(self):
         print('This script is running as a foo.')
-    
-    def with_args(self, first_arg, second_arg):
-        print('This script is running as a foo with args: %s, %s.' % (first_arg, second_arg))
+
+    def with_args(self,
+                  first_arg: int,  # Type annotations are used to add a type check on the CLI arg
+                  second_arg):
+        print('This script is running as a foo with %s %s.' % (first_arg, second_arg))
 
 
 class SecondCommand:
@@ -33,17 +37,19 @@ class SecondCommand:
 
     def _base(self):
         print('This script is running in a bar.')
-    
-    def order(self, order='Beer'):
+
+    def order(self,
+              order='Beer'  # method kwargs are translated to optiona args in the form of "--arg"
+              ):
         print('You ordered a %s' % order)
 
 
 if __name__ == '__main__':
     CliBuilder(locals()).run_cli()
+
 ```
 
 
 This projects's goals:
  * this project should let fast CLI prototyping
  * this project should stay lightweight
- 

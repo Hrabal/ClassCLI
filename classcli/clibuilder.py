@@ -41,13 +41,14 @@ class CliBuilder:
                 # Instantiate the controller class
                 controller = cls()
                 # Bind the subparser to the command defined in the class
-                cls_parser = subparsers.add_parser(controller.command, help=cls.__doc__)
+                cls_parser = subparsers.add_parser(controller.command,
+                                                   help=f'{inspect.getdoc(cls)}\n{inspect.getdoc(cls._base)}')
                 cls_parser.set_defaults(func=controller._base)
                 # Every method in the controller class will have it's own subparser
                 method_parser = cls_parser.add_subparsers()
                 for _, fnc in inspect.getmembers(controller, inspect.ismethod):
                     if fnc.__name__ not in ('__init__', '_base'):
-                        method = method_parser.add_parser(fnc.__name__, help=fnc.__doc__)
+                        method = method_parser.add_parser(fnc.__name__, help=inspect.getdoc(fnc))
                         # Bind the class method to the subparser argument
                         method.set_defaults(func=fnc)
                         for arg in inspect.signature(fnc).parameters.values():
@@ -75,5 +76,5 @@ class CliBuilder:
             for subparsers_action in subparsers_actions:
                 # get all subparsers and print help
                 for choice, subparser in subparsers_action.choices.items():
-                    print(f"\nCommand {fg.red}'{choice}'{rs.fg}")
+                    print(f"\n== Command {fg.red}'{choice}'{rs.fg} {'=' * 50} ")
                     print(subparser.format_help())

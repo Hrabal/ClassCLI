@@ -19,10 +19,12 @@ class NonCommandClass:
 
 
 class MainCommand:
+    """Docstring are used for help."""
     callable_cls = True
     command = 'foo'
 
     def _base(self):
+        """Docstring are used for help in methods too."""
         print('This script is running as a foo.')
 
     def with_args(self,

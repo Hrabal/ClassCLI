@@ -53,7 +53,6 @@ if __name__ == '__main__':
 
 ```
 
-
 This projects's goals:
- * this project should let fast CLI prototyping
- * this project should stay lightweight
+* this project should let fast CLI prototyping
+* this project should stay lightweight

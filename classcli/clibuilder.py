@@ -50,7 +50,7 @@ def _make_arg(arg, used_aliases: set):
     return names, arg_kwargs
 
 
-def _read_arguments(self, method_args_parser, fnc):
+def _read_arguments(method_args_parser, fnc):
     used_aliases = set()
     for arg in inspect.signature(fnc).parameters.values():
         arg_kwargs = {}

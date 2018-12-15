@@ -35,7 +35,9 @@ class CliBuilder:
 
         # For every controller class defined in the input module we add a subparser
         for _, cls in self._load_object(module_or_obj_collection):
-            self._make_subparser(cls)
+            # Only classes with callable_cls will be added as subparser (so to exclude utility classes)
+            if getattr(cls, 'callable_cls', False):
+                self._make_subparser(cls)
 
     def _load_object(self, module_or_obj_collection):
         # Input cleanup, get an iterable of classes out of the argument
@@ -50,28 +52,26 @@ class CliBuilder:
         return iterator
 
     def _make_subparser(self, cls):
-        # Only classes with callable_cls will be added as subparser (so to exclude utility classes)
-        if getattr(cls, 'callable_cls', False):
-            # Help for this command from the class docstring and the _base method docstring
-            help_str = '\n'.join(doc for doc in (inspect.getdoc(cls), inspect.getdoc(cls._base)) if doc)
+        # Help for this command from the class docstring and the _base method docstring
+        help_str = '\n'.join(doc for doc in (inspect.getdoc(cls), inspect.getdoc(cls._base)) if doc)
 
-            # Instance of the controller class that will be called
-            controller = cls()
+        # Instance of the controller class that will be called
+        controller = cls()
 
-            # Bind the subparser to the command defined in the class, to run the _base method
-            cls_parser = self.subparsers.add_parser(controller.command, help=help_str)
-            cls_parser.set_defaults(func=controller._base)
+        # Bind the subparser to the command defined in the class, to run the _base method
+        cls_parser = self.subparsers.add_parser(controller.command, help=help_str)
+        cls_parser.set_defaults(func=controller._base)
 
-            # Every method in the controller class will have it's own subparser
-            method_parser = cls_parser.add_subparsers()
-            for _, fnc in inspect.getmembers(controller, inspect.ismethod):
-                # Exclude the 'private' methods only methods with no leading underscore are used
-                if not fnc.__name__.startswith('_'):
-                    # Make a new subparser in the class one
-                    method_args_parser = method_parser.add_parser(fnc.__name__, help=inspect.getdoc(fnc) or '')
-                    # Bind the class method to the subparser argument
-                    method_args_parser.set_defaults(func=fnc)
-                    self._read_arguments(method_args_parser, fnc)
+        # Every method in the controller class will have it's own subparser
+        method_parser = cls_parser.add_subparsers()
+        for _, fnc in inspect.getmembers(controller, inspect.ismethod):
+            # Exclude the 'private' methods only methods with no leading underscore are used
+            if not fnc.__name__.startswith('_'):
+                # Make a new subparser in the class one
+                method_args_parser = method_parser.add_parser(fnc.__name__, help=inspect.getdoc(fnc) or '')
+                # Bind the class method to the subparser argument
+                method_args_parser.set_defaults(func=fnc)
+                self._read_arguments(method_args_parser, fnc)
 
     def _read_arguments(self, method_args_parser, fnc):
         used_aliases = set()
@@ -87,15 +87,18 @@ class CliBuilder:
         return ('-%s' % arg.name, ), {'action': 'store_false' if arg.default is False else 'store_true'}
 
     def _make_arg(self, arg, used_aliases: set):
-        arg_kwargs = {'type': arg.annotation if arg.annotation is not arg.empty else str}
+        arg_kwargs = {
+            'type': arg.annotation if arg.annotation is not arg.empty else str
+        }
         if arg.default is not arg.empty:
             arg_kwargs['default'] = arg.default
             names = ['--%s' % arg.name, ]
-            for letter in arg.name:
-                if letter not in used_aliases:
-                    names.insert(0, '-%s' % letter)
-                    used_aliases.add(letter)
-                    break
+            try:
+                letter = next(l for l in arg.name if l not in used_aliases)
+                names.insert(0, '-%s' % letter)
+                used_aliases.add(letter)
+            except StopIteration:
+                raise argparse.ArgumentError(None, 'Impossible to find an alias for argument %s.' % arg)
         else:
             names = (arg.name, )
         return names, arg_kwargs

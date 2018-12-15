@@ -55,18 +55,40 @@ class CliBuilder:
                 # Bind the subparser to the command defined in the class, to run the _base method
                 cls_parser = subparsers.add_parser(controller.command, help=help_str)
                 cls_parser.set_defaults(func=controller._base)
+
                 # Every method in the controller class will have it's own subparser
                 method_parser = cls_parser.add_subparsers()
                 for _, fnc in inspect.getmembers(controller, inspect.ismethod):
-                    if fnc.__name__ not in ('__init__', '_base'):
-                        method = method_parser.add_parser(fnc.__name__, help=inspect.getdoc(fnc))
+                    # Exclude the 'private' methods only methods with no leading underscore are used
+                    if not fnc.__name__.startswith('_'):
+                        # Make a new subparser in the class one
+                        method = method_parser.add_parser(fnc.__name__, help=inspect.getdoc(fnc) or '')
                         # Bind the class method to the subparser argument
                         method.set_defaults(func=fnc)
+                        opt_args = set()
                         for arg in inspect.signature(fnc).parameters.values():
-                            name = f'--{arg.name}' if arg.default is not arg.empty else arg.name
-                            default = arg.default if arg.default is not arg.empty else None
-                            typ = arg.annotation if arg.annotation is not arg.empty else str
-                            method.add_argument(name, type=typ, default=default)
+                            arg_kwargs = {}
+                            if arg.annotation is bool:
+                                name = f'-{arg.name}'
+                                opt_letter = None
+                                arg_kwargs['action'] = 'store_false' if arg.default is False else 'store_true'
+                            else:
+                                arg_kwargs['type'] = arg.annotation if arg.annotation is not arg.empty else str
+                                opt_letter = None
+                                if arg.default is not arg.empty:
+                                    arg_kwargs['default'] = arg.default
+                                    name = f'--{arg.name}'
+                                    for letter in arg.name:
+                                        if letter not in opt_args:
+                                            opt_letter = f'-{letter}'
+                                            opt_args.add(letter)
+                                            break
+                                else:
+                                    name = arg.name
+
+                            names = [n for n in (opt_letter, name) if n]
+                            a = method.add_argument(*names, **arg_kwargs)
+                            print(a)
 
     def run_cli(self, args=None):
         if args:

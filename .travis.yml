@@ -7,7 +7,6 @@ cache:
 python:
   - "3.5"
   - "3.6"
-  - "3.7"
   - "nightly" # currently points to 3.7-dev
 install:
   - "pip3 install coveralls"

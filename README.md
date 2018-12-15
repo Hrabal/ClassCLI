@@ -11,8 +11,9 @@ ClassCLI uses docstrings to build the CLI's help, kwargs defaults to set CLI's p
 
 ClassCLI can be used to build CLI interfaces on top of existing APIs, or can be used to write scripts with a full-featured CLI writing commands and arguments as classes and functions.
 
-Example code:
+Example code with one file:
 ```python
+# classcli_example.py
 from classcli import CliBuilder
 
 
@@ -43,15 +44,16 @@ class SecondCommand:
         print('This script is running in a bar.')
 
     def order(self,
-              order='Beer'  # method kwargs are translated to optiona args in the form of "--arg"
+              a='Beer'  # method kwargs are translated to optiona args in the form of "--arg"
               ):
-        print('You ordered a %s' % order)
+        print('You ordered a %s' % a)
 
 
 if __name__ == '__main__':
     CliBuilder(locals()).run_cli()
-
 ```
+
+
 
 This projects's goals:
 * this project should let fast CLI prototyping

@@ -75,7 +75,7 @@ class CliBuilder:
         try:
             if not vars(args):
                 raise argparse.ArgumentError(None, 'At least one argument needed.')
-            args.func(**{k: v for k, v in vars(args).items() if k != 'func'})
+            return args.func(**{k: v for k, v in vars(args).items() if k != 'func'})
         except argparse.ArgumentError as ex:
             print(f'{fg.red}ERROR! Wrong command invocation: {ex.message}{rs.fg}')
             print('Please read the help:')

@@ -74,29 +74,31 @@ class CliBuilder:
                     self._read_arguments(method_args_parser, fnc)
 
     def _read_arguments(self, method_args_parser, fnc):
-        opt_args = set()
+        used_aliases = set()
         for arg in inspect.signature(fnc).parameters.values():
             arg_kwargs = {}
             if arg.annotation is bool:
-                name = '-%s' % arg.name
-                opt_letter = None
-                arg_kwargs['action'] = 'store_false' if arg.default is False else 'store_true'
+                names, arg_kwargs = self._make_bool_arg(arg)
             else:
-                arg_kwargs['type'] = arg.annotation if arg.annotation is not arg.empty else str
-                opt_letter = None
-                if arg.default is not arg.empty:
-                    arg_kwargs['default'] = arg.default
-                    name = '--%s' % arg.name
-                    for letter in arg.name:
-                        if letter not in opt_args:
-                            opt_letter = '-%s' % letter
-                            opt_args.add(letter)
-                            break
-                else:
-                    name = arg.name
-
-            names = [n for n in (opt_letter, name) if n]
+                names, arg_kwargs = self._make_arg(arg, used_aliases)
             method_args_parser.add_argument(*names, **arg_kwargs)
+
+    def _make_bool_arg(self, arg):
+        return ('-%s' % arg.name, ), {'action': 'store_false' if arg.default is False else 'store_true'}
+
+    def _make_arg(self, arg, used_aliases: set):
+        arg_kwargs = {'type': arg.annotation if arg.annotation is not arg.empty else str}
+        if arg.default is not arg.empty:
+            arg_kwargs['default'] = arg.default
+            names = ['--%s' % arg.name, ]
+            for letter in arg.name:
+                if letter not in used_aliases:
+                    names.insert(0, '-%s' % letter)
+                    used_aliases.add(letter)
+                    break
+        else:
+            names = (arg.name, )
+        return names, arg_kwargs
 
     def run_cli(self, args=None):
         if args:

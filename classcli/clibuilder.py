@@ -24,8 +24,10 @@ class ClassParser(argparse.ArgumentParser):
 
 class CliBuilder:
     def __init__(self, module_or_obj_collection):
-        self.parser = ClassParser()
-        subparsers = self.parser.add_subparsers()
+        """ Creates a hierarchical parser from a module, a list or a dict.
+        Filters the input looking for classes, and only uses those who have bool(callable_cls) == True
+        """
+        # Input cleanup, get an iterable of classes out of the argument
         if isinstance(module_or_obj_collection, dict):
             iterator = ((cname, obj) for cname, obj in module_or_obj_collection.items() if inspect.isclass(obj))
         elif isinstance(module_or_obj_collection, list):
@@ -34,15 +36,24 @@ class CliBuilder:
             iterator = inspect.getmembers(module_or_obj_collection, inspect.isclass)
         else:
             raise TypeError('Unsupported type for CLI init: list/dist with classes in it or module supported.')
-        # For every controller class defined in the module_or_obj_collection module we add a subparser
+
+        # Main argparse instance
+        self.parser = ClassParser()
+        # subparser colleector
+        subparsers = self.parser.add_subparsers()
+
+        # For every controller class defined in the input module we add a subparser
         for _, cls in iterator:
-            # Only classes with _callable will be added as subparser (so to exclude utility classes)
+            # Only classes with callable_cls will be added as subparser (so to exclude utility classes)
             if getattr(cls, 'callable_cls', False):
-                # Instantiate the controller class
+                # Help for this command from the class docstring and the _base method docstring
+                help_str = '\n'.join(doc for doc in (inspect.getdoc(cls), inspect.getdoc(cls._base)) if doc)
+
+                # Instance of the controller class that will be called
                 controller = cls()
-                # Bind the subparser to the command defined in the class
-                cls_parser = subparsers.add_parser(controller.command,
-                                                   help=f'{inspect.getdoc(cls)}\n{inspect.getdoc(cls._base)}')
+
+                # Bind the subparser to the command defined in the class, to run the _base method
+                cls_parser = subparsers.add_parser(controller.command, help=help_str)
                 cls_parser.set_defaults(func=controller._base)
                 # Every method in the controller class will have it's own subparser
                 method_parser = cls_parser.add_subparsers()

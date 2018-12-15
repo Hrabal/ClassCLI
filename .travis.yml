@@ -1,0 +1,24 @@
+# https://travis-ci.org/Hrabal/ClassCLI
+sudo: false
+language: python
+cache:
+  directories:
+    - "$HOME/.cache/pip"
+python:
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "nightly" # currently points to 3.7-dev
+install:
+  - "pip3 install coveralls"
+  - "pip3 install -r requirements.txt"
+branches:
+  only:
+    - master
+# command to run tests
+script: coverage run -m unittest discover
+after_success:
+  coveralls
+after_script:
+  - sleep 3 # helps travis finish logging

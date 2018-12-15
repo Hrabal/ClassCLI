@@ -110,5 +110,5 @@ class CliBuilder:
             for subparsers_action in subparsers_actions:
                 # get all subparsers and print help
                 for choice, subparser in subparsers_action.choices.items():
-                    print(f"\n== Command {fg.red}'{choice}'{rs.fg} {'=' * 50} ")
+                    print("\n== Command %s'%s'%s " % (fg.red, choice, rs.fg, '=' * 50))
                     print(subparser.format_help())

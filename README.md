@@ -1,7 +1,7 @@
 # ClassCLI
 Command Line Interfaces from class definitions.
 
-[![PyPI version](https://badge.fury.io/py/classcli.svg)](https://badge.fury.io/py/classcli) [![PyPI version](https://img.shields.io/badge/python-%3E%3D%203.5-blue.svg)](https://pypi.org/project/classcli/) [![Build Status](https://travis-ci.org/Hrabal/ClassCLI.svg?branch=master)](https://travis-ci.org/Hrabal/ClassCLI) [![Coverage Status](https://coveralls.io/repos/github/Hrabal/ClassCLI/badge.svg?branch=master)](https://coveralls.io/github/Hrabal/ClassCLI?branch=master)
+[![PyPI version](https://badge.fury.io/py/classcli.svg)](https://badge.fury.io/py/classcli) [![PyPI version](https://img.shields.io/badge/python-%3E%3D%203.5-blue.svg)](https://pypi.org/project/classcli/) [![Build Status](https://travis-ci.org/Hrabal/ClassCLI.svg?branch=master)](https://travis-ci.org/Hrabal/ClassCLI) [![Maintainability](https://api.codeclimate.com/v1/badges/d281ff92c2d45c4f2e75/maintainability)](https://codeclimate.com/github/Hrabal/ClassCLI/maintainability) [![Coverage Status](https://coveralls.io/repos/github/Hrabal/ClassCLI/badge.svg?branch=master)](https://coveralls.io/github/Hrabal/ClassCLI?branch=master) [![Downloads](https://pepy.tech/badge/classcli)](https://pepy.tech/project/classcli) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/Hrabal/ClassCLI/master/LICENSE)
 
 
 Very similar to [Fire](https://github.com/google/python-fire), this is a Python module that let you build command line interfaces directly from collection of classes, saving you from writing boilerplate code.

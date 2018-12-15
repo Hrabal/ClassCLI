@@ -105,7 +105,7 @@ class CliBuilder:
                 method_args_parser = method_parser.add_parser(fnc.__name__, help=inspect.getdoc(fnc) or '')
                 # Bind the class method to the subparser argument
                 method_args_parser.set_defaults(func=fnc)
-                self._read_arguments(method_args_parser, fnc)
+                _read_arguments(method_args_parser, fnc)
 
     def run_cli(self, args=None):
         if args:

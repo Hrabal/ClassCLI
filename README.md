@@ -53,6 +53,7 @@ if __name__ == '__main__':
     CliBuilder(locals()).run_cli()
 ```
 
+[![asciicast](https://asciinema.org/a/GT6zcL2uMTs4XA3D53Nlr94Ih.svg)](https://asciinema.org/a/GT6zcL2uMTs4XA3D53Nlr94Ih)
 
 
 This projects's goals:

@@ -17,7 +17,7 @@ except ImportError:
 
 class ClassParser(argparse.ArgumentParser):
     def error(self, message):
-        sys.stderr.write(f'{fg.red}error: {message}{rs.fg}\n')
+        sys.stderr.write('%serror: %s%s\n' % (fg.red, message, rs.fg))
         self.print_help()
         sys.exit(2)
 
@@ -69,7 +69,7 @@ class CliBuilder:
                         for arg in inspect.signature(fnc).parameters.values():
                             arg_kwargs = {}
                             if arg.annotation is bool:
-                                name = f'-{arg.name}'
+                                name = '-%s' % arg.name
                                 opt_letter = None
                                 arg_kwargs['action'] = 'store_false' if arg.default is False else 'store_true'
                             else:
@@ -77,10 +77,10 @@ class CliBuilder:
                                 opt_letter = None
                                 if arg.default is not arg.empty:
                                     arg_kwargs['default'] = arg.default
-                                    name = f'--{arg.name}'
+                                    name = '--%s' % arg.name
                                     for letter in arg.name:
                                         if letter not in opt_args:
-                                            opt_letter = f'-{letter}'
+                                            opt_letter = '-%s' % letter
                                             opt_args.add(letter)
                                             break
                                 else:
@@ -98,7 +98,7 @@ class CliBuilder:
                 raise argparse.ArgumentError(None, 'At least one argument needed.')
             return args.func(**{k: v for k, v in vars(args).items() if k != 'func'})
         except argparse.ArgumentError as ex:
-            print(f'{fg.red}ERROR! Wrong command invocation: {ex.message}{rs.fg}')
+            print('ERROR! Wrong command invocation: %s%s' % (fg.red, ex.message, rs.fg))
             print('Please read the help:')
             self.parser.print_help()
             # retrieve subparsers from parser

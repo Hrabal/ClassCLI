@@ -110,14 +110,3 @@ class CliBuilder:
             print('ERROR! Wrong command invocation: %s%s' % (fg.red, ex.message, rs.fg))
             print('Please read the help:')
             self.parser.print_help()
-            # retrieve subparsers from parser
-            subparsers_actions = [
-                action for action in self.parser._actions
-                if isinstance(action, argparse._SubParsersAction)]
-            # there will probably only be one subparser_action,
-            # but better save than sorry
-            for subparsers_action in subparsers_actions:
-                # get all subparsers and print help
-                for choice, subparser in subparsers_action.choices.items():
-                    print("\n== Command %s'%s'%s " % (fg.red, choice, rs.fg, '=' * 50))
-                    print(subparser.format_help())

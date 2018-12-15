@@ -1,6 +1,7 @@
 # ClassCLI
 Command Line Interfaces from class definitions.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ece6dfe1a5774a5992061515b36db0d4)](https://app.codacy.com/app/federicocerchiari/ClassCLI?utm_source=github.com&utm_medium=referral&utm_content=Hrabal/ClassCLI&utm_campaign=Badge_Grade_Dashboard)
 [![PyPI version](https://badge.fury.io/py/classcli.svg)](https://badge.fury.io/py/classcli) [![PyPI version](https://img.shields.io/badge/python-%3E%3D%203.5-blue.svg)](https://pypi.org/project/classcli/) [![Build Status](https://travis-ci.org/Hrabal/ClassCLI.svg?branch=master)](https://travis-ci.org/Hrabal/ClassCLI) [![Coverage Status](https://coveralls.io/repos/github/Hrabal/ClassCLI/badge.svg?branch=master)](https://coveralls.io/github/Hrabal/ClassCLI?branch=master)
 
 

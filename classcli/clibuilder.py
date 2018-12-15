@@ -50,6 +50,17 @@ def _make_arg(arg, used_aliases: set):
     return names, arg_kwargs
 
 
+def _read_arguments(self, method_args_parser, fnc):
+    used_aliases = set()
+    for arg in inspect.signature(fnc).parameters.values():
+        arg_kwargs = {}
+        if arg.annotation is bool:
+            names, arg_kwargs = _make_bool_arg(arg)
+        else:
+            names, arg_kwargs = _make_arg(arg, used_aliases)
+        method_args_parser.add_argument(*names, **arg_kwargs)
+
+
 class ClassParser(argparse.ArgumentParser):
     def error(self, message):
         sys.stderr.write('%serror: %s%s\n' % (fg.red, message, rs.fg))
@@ -95,16 +106,6 @@ class CliBuilder:
                 # Bind the class method to the subparser argument
                 method_args_parser.set_defaults(func=fnc)
                 self._read_arguments(method_args_parser, fnc)
-
-    def _read_arguments(self, method_args_parser, fnc):
-        used_aliases = set()
-        for arg in inspect.signature(fnc).parameters.values():
-            arg_kwargs = {}
-            if arg.annotation is bool:
-                names, arg_kwargs = _make_bool_arg(arg)
-            else:
-                names, arg_kwargs = _make_arg(arg, used_aliases)
-            method_args_parser.add_argument(*names, **arg_kwargs)
 
     def run_cli(self, args=None):
         if args:

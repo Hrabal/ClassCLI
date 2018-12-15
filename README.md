@@ -1,6 +1,9 @@
 # ClassCLI
 Command Line Interfaces from class definitions.
 
+[![Build Status](https://travis-ci.org/Hrabal/ClassCLI.svg?branch=master)](https://travis-ci.org/Hrabal/ClassCLI) [![Coverage Status](https://coveralls.io/repos/github/Hrabal/ClassCLI/badge.svg?branch=master)](https://coveralls.io/github/Hrabal/ClassCLI?branch=master)
+
+
 Very similar to [Fire](https://github.com/google/python-fire), this is a Python module that let you build command line interfaces directly from collection of classes, saving you from writing boilerplate code.
 
 ClassCLI is built on top of argparse, it create arguments of the cli by inspecting the classes in a given list or in a module. Each compatible class is transformed in a first-level argument, each function in a second-level argument, each function's argument in a third level argument.

@@ -108,7 +108,7 @@ class CliBuilder:
                 _read_arguments(method_args_parser, fnc)
 
     def run_cli(self, args=None):
-        if args:
+        if args is not None:
             args = map(str, args)
         args = self.parser.parse_args(args or sys.argv[1:])
         try:

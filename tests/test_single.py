@@ -2,48 +2,18 @@
 """
 @author: Federico Cerchiari <federicocerchiari@gmail.com>
 """
-import os
-import sys
 import unittest
-sys.path.append(os.getcwd())
+from contextlib import redirect_stdout
+from io import StringIO
+
+from tests.module import TestClass
 from classcli import CliBuilder
 
 
 class TestSingleClass(unittest.TestCase):
 
-    class TestClass:
-            callable_cls = True
-            command = 'test'
-
-            def _base(self):
-                return 1
-
-            def test_method(self):
-                return 2
-
-            def test_argument(self, arg1):
-                return arg1
-
-            def test_argument_type(self, arg1: int):
-                return arg1
-
-            def test_argument_opt(self, arg1='2'):
-                return arg1
-
-            def test_argument_opt_type(self, arg1: int=2):
-                return arg1
-
-            def test_argument_opt_multiple(self, arg1='2', barg='3'):
-                return barg
-
-            def test_argument_bool(self, arg1: bool):
-                return arg1
-
-            def test_argument_bool_false(self, arg1: bool=False):
-                return arg1
-
     def setUp(self):
-        self.parser = CliBuilder([TestSingleClass.TestClass, ])
+        self.parser = CliBuilder([TestClass, ])
 
     def test_base_func(self):
         self.assertEqual(self.parser.run_cli(['test', ]), 1)
@@ -74,3 +44,10 @@ class TestSingleClass(unittest.TestCase):
 
     def test_argument_bool_false(self):
         self.assertEqual(self.parser.run_cli(['test', 'test_argument_bool_false', '-arg1']), False)
+
+    def test_no_args(self):
+        out = StringIO()
+        with redirect_stdout(out):
+            self.parser.run_cli([])
+        output = out.getvalue()
+        self.assertTrue('At least one argument needed.' in output)

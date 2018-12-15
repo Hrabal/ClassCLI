@@ -2,11 +2,9 @@
 """
 @author: Federico Cerchiari <federicocerchiari@gmail.com>
 """
-import os
-import sys
 import unittest
 import argparse
-sys.path.append(os.getcwd())
+
 from classcli import CliBuilder
 
 

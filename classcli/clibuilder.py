@@ -68,8 +68,10 @@ class CliBuilder:
                             typ = arg.annotation if arg.annotation is not arg.empty else str
                             method.add_argument(name, type=typ, default=default)
 
-    def run_cli(self):
-        args = self.parser.parse_args()
+    def run_cli(self, args=None):
+        if args:
+            args = map(str, args)
+        args = self.parser.parse_args(args or sys.argv[1:])
         try:
             if not vars(args):
                 raise argparse.ArgumentError(None, 'At least one argument needed.')

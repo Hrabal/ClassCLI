@@ -1,0 +1,6 @@
+[run]
+source = classcli
+[report]
+omit =
+    */python?.?/*
+    __main__.py

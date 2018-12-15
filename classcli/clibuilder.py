@@ -87,8 +87,7 @@ class CliBuilder:
                                     name = arg.name
 
                             names = [n for n in (opt_letter, name) if n]
-                            a = method.add_argument(*names, **arg_kwargs)
-                            print(a)
+                            method.add_argument(*names, **arg_kwargs)
 
     def run_cli(self, args=None):
         if args:
